@@ -40,7 +40,7 @@ public class EditNote extends javax.swing.JFrame {
             ResultSet rs = dbHelper.getNotesById(id);
             while(rs.next()){
                 txtTitle.setText(rs.getString("title"));
-                txtTag.setText(rs.getString("tag"));
+                txtTag.setText(rs.getString("tags"));
                 txtaDescription.setText(rs.getString("description"));
                 Date date = rs.getDate("date");
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy");

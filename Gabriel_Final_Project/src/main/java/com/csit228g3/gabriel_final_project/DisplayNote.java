@@ -33,14 +33,13 @@ public class DisplayNote extends javax.swing.JFrame {
             ResultSet rs = dbHelper.getNotes();
             while (rs.next()) {
                 int id = rs.getInt("id");
+                String title = rs.getString("title");
                 String date = rs.getString("date");
                 String tags = rs.getString("tags");
                 String description = rs.getString("description");
-                Object[] row = {id, date, tags, description};
+                Object[] row = {id, title, date, tags, description};
                 addRowToTable(row);
             }
-
-            dbHelper.close();
         } catch (SQLException ex) {
             Logger.getLogger(DisplayNote.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -69,30 +68,52 @@ public class DisplayNote extends javax.swing.JFrame {
         txtEdit = new javax.swing.JButton();
         txtDelete = new javax.swing.JButton();
         txtTag = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title", "Date", "Tags", "Description"
+                "ID", "Title", "Date", "Tags", "Description"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+        }
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Tags");
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton1.setText("DISPLAY ALL");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton2.setText("GO");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         txtEdit.setText("EDIT");
         txtEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -102,6 +123,18 @@ public class DisplayNote extends javax.swing.JFrame {
         });
 
         txtDelete.setText("DELETE");
+        txtDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtDeleteMouseClicked(evt);
+            }
+        });
+
+        jButton3.setText("ADD");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,6 +146,8 @@ public class DisplayNote extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(212, 212, 212)
+                        .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1))
                     .addGroup(layout.createSequentialGroup()
@@ -139,7 +174,8 @@ public class DisplayNote extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(txtEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                    .addComponent(txtEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                    .addComponent(jButton3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(7, 7, 7))
@@ -160,9 +196,57 @@ public class DisplayNote extends javax.swing.JFrame {
         editProduct.setTextById(id);
         editProduct.setVisible(true);
         dispose();
-    }
     }//GEN-LAST:event_txtEditActionPerformed
 
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+        initData();
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void txtDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDeleteMouseClicked
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        int selectedRowIndex = jTable1.getSelectedRow();
+        if (selectedRowIndex == -1) {
+            return;
+        }
+        int id = Integer.parseInt(model.getValueAt(selectedRowIndex, 0).toString());
+        try {
+            dbHelper.deleteNoteById(id);
+        } catch (SQLException e) {
+        }
+        initData();
+    }//GEN-LAST:event_txtDeleteMouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        try {
+            
+            ResultSet rs = dbHelper.getNotesByTag(txtTag.getText());
+            rsAddRow(rs);
+        } catch (SQLException e) {
+        }
+        
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+        AddNewNotes addNewNotes = new AddNewNotes();
+        addNewNotes.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_jButton3MouseClicked
+    
+    private void rsAddRow(ResultSet rs) throws SQLException{
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String title = rs.getString("title");
+            String date = rs.getString("date");
+            String tags = rs.getString("tags");
+            String description = rs.getString("description");
+            Object[] row = {id, title, date, tags, description};
+            addRowToTable(row);
+         }
+    }
     /**
      * @param args the command line arguments
      */
@@ -201,6 +285,7 @@ public class DisplayNote extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

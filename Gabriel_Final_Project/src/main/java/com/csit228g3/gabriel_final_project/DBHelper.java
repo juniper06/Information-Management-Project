@@ -28,7 +28,7 @@ public class DBHelper {
     public void editNotes(int id, String title, String date, String tags, String description) throws SQLException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate parsedDate = LocalDate.parse(date, formatter);
-        String sql = String.format("UPDATE tblnotes SET title = '%s', date = '%s', tags =  '%s', description = '%s' WHERE id = %d",
+        String sql = String.format("UPDATE tblnotes SET title = '%s', date = '%s', tags = '%s', description = '%s' WHERE id = %d",
                 title, parsedDate, tags, description, id);
         query.update(sql);
     }
@@ -40,12 +40,20 @@ public class DBHelper {
         query.update("INSERT INTO tblnotes (id, title, date, tags, description) values (" + values + ")");
     }
     
+    public void deleteNoteById(int id) throws SQLException{
+        query.update("DELETE FROM tblnotes WHERE id = " + id);
+    }
+    
     public ResultSet getNotes() throws SQLException{
         return query.execute("SELECT * FROM tblnotes");
     }
     
     public ResultSet getNotesById(int id) throws SQLException{
         return query.execute("SELECT * FROM tblnotes WHERE id = " + id);
+    }
+    
+    public ResultSet getNotesByTag(String tag) throws SQLException{
+        return query.execute("SELECT * FROM tblnotes WHERE tags = " + tag);
     }
     
     public void close() throws SQLException{
