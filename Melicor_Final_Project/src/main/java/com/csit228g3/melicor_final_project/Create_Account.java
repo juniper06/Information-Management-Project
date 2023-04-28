@@ -3,18 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.csit228g3.melicor_final_project;
-
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Juniper Gabriel
  */
 public class Create_Account extends javax.swing.JFrame {
+    private DBHelper dbHelper;
 
     /**
      * Creates new form Create_Account
      */
     public Create_Account() {
         initComponents();
+        dbHelper = new DBHelper();
     }
 
     /**
@@ -58,12 +63,27 @@ public class Create_Account extends javax.swing.JFrame {
 
         btnClear.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnClear.setText("CLEAR");
+        btnClear.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnClearMouseClicked(evt);
+            }
+        });
 
         btnAdd.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnAdd.setText("REGISTER");
+        btnAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAddMouseClicked(evt);
+            }
+        });
 
         btnBack.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnBack.setText("BACK");
+        btnBack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnBackMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -129,6 +149,39 @@ public class Create_Account extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseClicked
+        // TODO add your handling code here:
+        String firstname = txtFname.getText();
+        String lastname = txtLname.getText();
+        String username = txtUser.getText();
+        String password = txtPass.getText();
+        
+        try {
+            dbHelper.addUser(firstname, lastname, username, password);
+        } catch (SQLException e) {
+            Logger.getLogger(DBHelper.class.getName()).log(Level.SEVERE, null, e);
+        }
+        JOptionPane.showMessageDialog(rootPane, "Successfully Created!");
+        Display_Users display_Users = new Display_Users();
+        display_Users.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnAddMouseClicked
+
+    private void btnClearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClearMouseClicked
+        // TODO add your handling code here:
+        txtFname.setText("");
+        txtLname.setText("");
+        txtUser.setText("");
+        txtPass.setText("");
+    }//GEN-LAST:event_btnClearMouseClicked
+
+    private void btnBackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackMouseClicked
+        // TODO add your handling code here:
+        Display_Users display_Users = new Display_Users();
+        display_Users.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnBackMouseClicked
 
     /**
      * @param args the command line arguments
