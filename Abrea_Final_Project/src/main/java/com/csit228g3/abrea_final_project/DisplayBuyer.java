@@ -4,17 +4,26 @@
  */
 package com.csit228g3.abrea_final_project;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Juniper Gabriel
  */
 public class DisplayBuyer extends javax.swing.JFrame {
 
+    private DBHelper dbHelper;
+
     /**
      * Creates new form DisplayBuyer
      */
     public DisplayBuyer() {
         initComponents();
+        dbHelper = new DBHelper();
     }
 
     /**
@@ -39,10 +48,7 @@ public class DisplayBuyer extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Gender", "Nationality", "Mode of Payment"
@@ -51,8 +57,18 @@ public class DisplayBuyer extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         btnCreate1.setText("Create Record");
+        btnCreate1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCreate1MouseClicked(evt);
+            }
+        });
 
         btnDisplay1.setText("Display Merchant Record");
+        btnDisplay1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDisplay1MouseClicked(evt);
+            }
+        });
         btnDisplay1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDisplay1ActionPerformed(evt);
@@ -100,6 +116,41 @@ public class DisplayBuyer extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDisplay1ActionPerformed
 
+    private void btnCreate1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCreate1MouseClicked
+        // TODO add your handling code here:
+        AddBuyer addBuyer = new AddBuyer();
+        addBuyer.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnCreate1MouseClicked
+
+    private void btnDisplay1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDisplay1MouseClicked
+        // TODO add your handling code here:
+        initData();
+    }//GEN-LAST:event_btnDisplay1MouseClicked
+
+    public void initData() {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        tableModel.setRowCount(0);
+        try {
+            ResultSet rs = dbHelper.getBuyers();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String category = rs.getString("name");
+                String item = rs.getString("gender");
+                String supplier = rs.getString("nationality");
+                String customer = rs.getString("mop");
+                Object[] row = {id, category, item, supplier, customer};
+                addRowToTable(row);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DisplayBuyer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void addRowToTable(Object[] dataRows) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+        model.addRow(dataRows);
+    }
     /**
      * @param args the command line arguments
      */

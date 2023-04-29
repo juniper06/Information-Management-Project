@@ -7,9 +7,9 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>com.csit228g3</groupId>
-            <artifactId>Abrea_Final_Project</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.32</version>
         </dependency>
     </dependencies>
     <properties>
